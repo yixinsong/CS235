@@ -1,0 +1,70 @@
+#include "Robot.h"
+#include<string>
+#include<cmath>
+using namespace::std;
+Robot::Robot (string fighter,string type, int M_hitpoints, int stre,int spee,int magi)
+{
+	current_hitpoints=M_hitpoints;
+	fighter_name=fighter;
+	fighter_type=type;
+	Max_hitpoints=M_hitpoints;
+	strength=stre;
+	speed=spee;
+	magic=magi;
+	Maxmagic=magi;
+	bonus_damage=0;
+	energy=2*magi;
+}
+
+int Robot::getDamage(){
+	int realdamage;
+	if(bonus_damage!=0){
+		realdamage=getStrength()+bonus_damage;
+		bonus_damage=0;//if there's bonus, it's only good for 1 round.
+	return realdamage;//+bonus,
+	}
+	else{
+	return getStrength();
+	}
+}
+
+void Robot::takeDamage(int damage){
+double dodge= getSpeed()*0.25;
+int dodged=dodge;
+int damage_taken=damage-dodged;
+if(damage_taken<=1)
+{current_hitpoints--;}
+else{current_hitpoints-=damage_taken;
+}
+}
+
+int Robot::getCurrentHP(){
+return current_hitpoints;
+}
+
+void Robot::reset(){
+current_hitpoints=Max_hitpoints;//reset health
+energy=2*Maxmagic;//reset energy
+bonus_damage=0;//reset bonus_damage
+}
+
+void Robot::regenerate(){
+current_hitpoints+=getStrength()/6;
+if(getStrength()/6<1)
+current_hitpoints++;
+if(current_hitpoints>Max_hitpoints)//Can not exceed max health
+current_hitpoints=Max_hitpoints;
+}
+
+bool Robot::useAbility(){
+if(energy>=BOT_ABILITY_COST)
+	{
+	double bonusdamage=strength*pow((energy*0.5/Maxmagic),4);
+	bonus_damage=bonusdamage;
+	energy-=BOT_ABILITY_COST;
+	return true;
+	}
+else{
+	return false;
+	}
+}
